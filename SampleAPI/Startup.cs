@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
 using SampleAPI.Models;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace SampleAPI
 {
@@ -28,6 +29,11 @@ namespace SampleAPI
 		  public void ConfigureServices(IServiceCollection services)
 		  {
 				services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+				services.AddSwaggerGen(c =>
+				{
+					 c.SwaggerDoc("v1", new Info { Title = "Sample API", Version = "v1" });
+				});
+
 				services.AddDbContext<SampleAPIContext>(options =>
 		              options.UseSqlServer(Configuration.GetConnectionString("SampleAPIContext")));
 		  }
@@ -45,6 +51,15 @@ namespace SampleAPI
 				}
 
 				app.UseHttpsRedirection();
+				// Enable middleware to serve generated Swagger as a JSON endpoint.
+				app.UseSwagger();
+
+				// Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), 
+				// specifying the Swagger JSON endpoint.
+				app.UseSwaggerUI(c =>
+				{
+					 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+				});
 				app.UseMvc();
 		  }
 	 }
